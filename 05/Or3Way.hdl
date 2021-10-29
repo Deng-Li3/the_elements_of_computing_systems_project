@@ -1,0 +1,17 @@
+// This file is part of the materials accompanying the book 
+// "The Elements of Computing Systems" by Nisan and Schocken, 
+// MIT Press. Book site: www.idc.ac.il/tecs
+// File name: projects/01/Or8Way.hdl
+
+/**
+ * 3-way or gate: out = in[0] or in[1] or in[2].
+ */
+
+CHIP Or3Way {
+    IN a, b, c;
+    OUT out;
+
+    PARTS:
+    Or(a=a, b=b, out=v0);
+    Or(a=v0, b=c, out=out);
+}

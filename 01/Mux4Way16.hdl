@@ -1,0 +1,42 @@
+// This file is part of the materials accompanying the book 
+// "The Elements of Computing Systems" by Nisan and Schocken, 
+// MIT Press. Book site: www.idc.ac.il/tecs
+// File name: projects/01/Mux4Way16.hdl
+
+/**
+ * 4-way 16-bit multiplexor.  
+ * out = a if sel==00
+ *       b if sel==01
+ *       c if sel==10
+ *       d if sel==11
+ */
+
+
+CHIP Mux4Way16 {
+    IN a[16], b[16], c[16], d[16], sel[2];
+
+    OUT out[16];
+
+    PARTS:
+    Not(in=sel[0], out=nots0);
+    Not(in=sel[1], out=nots1);
+
+    And(a=nots0, b=nots1, out=w0);
+    And(a=sel[0], b=nots1, out=w1);
+    And(a=nots0, b=sel[1], out=w2);
+    And(a=sel[0], b=sel[1], out=w3);
+    /* Construct 16 bit weights */
+    Mux16(a[0..15]=false, b[0..15]=true, sel=w0, out[0..15]=wa);
+    Mux16(a[0..15]=false, b[0..15]=true, sel=w1, out[0..15]=wb);
+    Mux16(a[0..15]=false, b[0..15]=true, sel=w2, out[0..15]=wc);
+    Mux16(a[0..15]=false, b[0..15]=true, sel=w3, out[0..15]=wd);
+
+    And16(a[0..15]=a, b[0..15]=wa, out[0..15]=va);
+    And16(a[0..15]=b, b[0..15]=wb, out[0..15]=vb);
+    And16(a[0..15]=c, b[0..15]=wc, out[0..15]=vc);
+    And16(a[0..15]=d, b[0..15]=wd, out[0..15]=vd);
+
+    Or16(a[0..15]=va, b[0..15]=vb, out[0..15]=v0);
+    Or16(a[0..15]=vc, b[0..15]=vd, out[0..15]=v1);
+    Or16(a[0..15]=v0, b[0..15]=v1, out[0..15]=out);
+}

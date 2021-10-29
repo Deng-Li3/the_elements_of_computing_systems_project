@@ -1,0 +1,26 @@
+// This file is part of the materials accompanying the book 
+// "The Elements of Computing Systems" by Nisan and Schocken, 
+// MIT Press. Book site: www.idc.ac.il/tecs
+// File name: projects/01/DMux8Way.hdl
+
+/**
+ * 16-bit demultiplexor.  
+ * out = a if sel==0
+ *     = b if sel==1
+ */
+
+
+CHIP DMux16 {
+    IN in[16], sel;
+    OUT a[16], b[16];
+
+    PARTS:
+    Not(in=sel, out=nots);
+
+	/* Construct 16 bit weights */
+    Mux16(a[0..15]=false, b[0..15]=true, sel=nots, out[0..15]=wa);
+    Mux16(a[0..15]=false, b[0..15]=true, sel=sel, out[0..15]=wb);
+
+	And16(a=wa, b=in, out=a);
+    And16(a=wb, b=in, out=b);
+}

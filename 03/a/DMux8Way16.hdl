@@ -1,0 +1,66 @@
+// This file is part of the materials accompanying the book 
+// "The Elements of Computing Systems" by Nisan and Schocken, 
+// MIT Press. Book site: www.idc.ac.il/tecs
+// File name: projects/01/DMux8Way.hdl
+
+/**
+ * 8-way 16-bit demultiplexor.  
+ * {a,b,c,d,e,f,g,h} = {in,0,0,0,0,0,0,0} if sel==000
+ *                     {0,in,0,0,0,0,0,0} if sel==001
+ *                     etc.
+ *                     {0,0,0,0,0,0,0,in} if sel==111
+ */
+
+
+CHIP DMux8Way16 {
+    IN in[16], sel[3];
+    OUT a[16], b[16], c[16], d[16], e[16], f[16], g[16], h[16];
+
+    PARTS:
+    Not(in=sel[0], out=nots0);
+    Not(in=sel[1], out=nots1);
+    Not(in=sel[2], out=nots2);
+
+    And(a=nots0, b=nots1, out=t0);
+    And(a=t0, b=nots2, out=w0);
+
+    And(a=sel[0], b=nots1, out=t1);
+    And(a=t1, b=nots2, out=w1);
+
+    And(a=nots0, b=sel[1], out=t2);
+    And(a=t2, b=nots2, out=w2);
+
+    And(a=sel[0], b=sel[1], out=t3);
+    And(a=t3, b=nots2, out=w3);
+
+    And(a=nots0, b=nots1, out=t4);
+    And(a=t4, b=sel[2], out=w4);
+
+    And(a=sel[0], b=nots1, out=t5);
+    And(a=t5, b=sel[2], out=w5);
+
+    And(a=nots0, b=sel[1], out=t6);
+    And(a=t6, b=sel[2], out=w6);
+
+    And(a=sel[0], b=sel[1], out=t7);
+    And(a=t7, b=sel[2], out=w7);
+
+	/* Construct 16 bit weights */
+    Mux16(a[0..15]=false, b[0..15]=true, sel=w0, out[0..15]=wa);
+    Mux16(a[0..15]=false, b[0..15]=true, sel=w1, out[0..15]=wb);
+    Mux16(a[0..15]=false, b[0..15]=true, sel=w2, out[0..15]=wc);
+    Mux16(a[0..15]=false, b[0..15]=true, sel=w3, out[0..15]=wd);
+    Mux16(a[0..15]=false, b[0..15]=true, sel=w4, out[0..15]=we);
+    Mux16(a[0..15]=false, b[0..15]=true, sel=w5, out[0..15]=wf);
+    Mux16(a[0..15]=false, b[0..15]=true, sel=w6, out[0..15]=wg);
+    Mux16(a[0..15]=false, b[0..15]=true, sel=w7, out[0..15]=wh);
+    
+	And16(a=wa, b=in, out=a);
+    And16(a=wb, b=in, out=b);
+    And16(a=wc, b=in, out=c);
+    And16(a=wd, b=in, out=d);
+    And16(a=we, b=in, out=e);
+    And16(a=wf, b=in, out=f);
+    And16(a=wg, b=in, out=g);
+    And16(a=wh, b=in, out=h);
+}
